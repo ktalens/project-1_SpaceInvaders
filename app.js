@@ -14,8 +14,49 @@ galaxy.setAttribute('width', gameWidth);
 
  //CREATE SPACEGUYS
 var spaceCowboy;
-var spaceBugs;
-var hoardeOfAlienBugs = []
+var alienBug;
+var hoardeOfAlienBugs = [];
+var levels = [
+    {   level: 'ONE',
+        bugWidth: 80,
+        bugSideMargin: 20,
+        bugTopMargin: 10,
+        bugHeight: 60,
+        bugColor: "rgb(3, 173, 211)",
+        //quantity:20,
+        speed: .2
+    },
+    {   level: 'TWO',
+        bugWidth: 60,
+        bugSideMargin: 80,
+        bugTopMargin: 10,
+        bugHeight: 40,
+        bugColor: "rgb(67, 51, 157)",
+        //quantity:20,
+        speed: .5
+    },
+    {   level: 'THREE',
+        bugWidth: 30,
+        bugSideMargin: 50,
+        bugTopMargin: 50,
+        bugHeight: 30,
+        bugColor: "rgb(4, 213, 168)",
+        //quantity:20,
+        speed: 1
+    },
+    {   level: 'FOUR',
+        bugWidth: 15,
+        bugSideMargin: 100,
+        bugTopMargin: 150,
+        bugHeight: 30,
+        bugColor: "rgb(211, 180, 3)",
+        //quantity:20,
+        speed: 1
+    }
+];
+var currentLevel = 0;
+var score = 0;
+var lives = 2;
 
 function SpaceCreatures(x,y,color,width,height) {
     this.x = x
@@ -30,19 +71,33 @@ function SpaceCreatures(x,y,color,width,height) {
     }
 };
 
-function makeHoarde (howMany) {
-  
-  for (let i=0;i<howMany-1; i++) {
-    let bugWidth = 80;
-    let bugMargin = 10;
-    var startingXpos = bugMargin+((bugWidth+bugMargin)*i)
-    var startingYpos= bugMargin;
-    var alienBug = new SpaceCreatures(startingXpos, startingYpos, "rgb(67, 51, 157)", bugWidth, 20); 
-    hoardeOfAlienBugs.push(alienBug)
-    
+function makeHoarde (howMany,level) {
+    for (let i=0;i<howMany; i++) {
+        let width = levels[level].bugWidth;
+        let height = levels[level].bugHeight;
+        let margin = levels[level].bugSideMargin;
+        let color = levels[level].bugColor;
+        let startingXpos = margin+((width+margin)*i)
+        let startingYpos= levels[level].bugTopMargin;
+        var alienBug = new SpaceCreatures(startingXpos, startingYpos, color, width, height); 
+        hoardeOfAlienBugs.push(alienBug)
     }  
   };
-  makeHoarde(5);
+
+var thisMany =  Math.floor(parseInt(gameWidth)/(levels[currentLevel].bugWidth+levels[currentLevel].bugSideMargin))
+
+
+
+const chargeOnward =() => {
+    speed=levels[currentLevel].speed;
+    ctx.clearRect(0,0,galaxy.width,galaxy.height);
+    for (i=0;i<hoardeOfAlienBugs.length; i++){
+        hoardeOfAlienBugs[i].render();
+        hoardeOfAlienBugs[i].y +=speed;
+    }
+};
+
+
 // What needs to happen at every frame? 
 //1.display score(number of aliens destroyed)
 //2. has the win condition been met?
@@ -53,17 +108,19 @@ function makeHoarde (howMany) {
 //7.has a bullet been deployed (spacebar key:32) ? if yes, 7b.render hero bullet 7c. check collison
 
 function gameLoop(){
-  //Clear my shadow
-  ctx.clearRect(0,0,galaxy.width,galaxy.height);
-//TO-DO; add a function for passive movement of your spaceBugs
-  
-  for (i=0;i<hoardeOfAlienBugs.length; i++){
-    hoardeOfAlienBugs[i].render()
-  }
-  //spaceBugs.render(); 
-  //console.log('Hi cowboy!')
+    ctx.clearRect(0,0,galaxy.width,galaxy.height);
+//TO-DO; add a function for passive movement of your alienBug
+//console.log('hi');
+    // for (i=0;i<hoardeOfAlienBugs.length; i++){
+    //     hoardeOfAlienBugs[i].render();
+    //     hoardeOfAlienBugs[i].y +=.5;
+    // }
+    
+    chargeOnward();
+
   spaceCowboy.render();
   statusboard.textContent = `X: ${spaceCowboy.x} Y: ${spaceCowboy.y}`;
+  level.textContent = levels[currentLevel].level;
   galaxy.addEventListener("click", function (e) {
     livesboard.innerText = `X:${e.offsetX} Y: ${e.offsetY}`;
   })
@@ -95,9 +152,23 @@ function moonWalk(e) {
 document.addEventListener('DOMContentLoaded', 
 function() {
     spaceCowboy= new SpaceCreatures(parseInt(gameWidth)/2,parseInt(gameHeight)-30,'rgb(230, 92, 177)',20,20);
-    spaceBugs = new SpaceCreatures(10,10,'rgb(31, 121, 97)',40,80);
+    //alienBug = new SpaceCreatures(10,10,'rgb(31, 121, 97)',40,80);
     document.addEventListener('keydown',moonWalk);
+
     //SETTING A TIMER FOR 60 FRAMES PER SECOND
     var runGame = setInterval(gameLoop, 60);
+start.addEventListener('click',function () {
+    makeHoarde(thisMany,currentLevel);
+})
+
+    levelUp.addEventListener('click', function () {currentLevel+=1});
+    pause.addEventListener('click',function () {
+        clearInterval(runGame);
+        pauseScreen.style.display = "inline-flex";    
+    } );
+    resume.addEventListener('click',function () {
+        pauseScreen.style.display = "none";
+        runGame = setInterval(gameLoop, 60)})
+
   }
 );
