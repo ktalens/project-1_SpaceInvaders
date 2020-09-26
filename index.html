@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Space Invaders</h1>
+    <div id="container">
+      <aside id="levelboard">
+        <h2 id="level">LVL</h2>
+      </aside>
+      <aside id="statusboard">
+        <h2 id="status">STATUS: PAUSED or SEND THESE SPACEBUGS TO HECK</h2>
+      </aside>
+      <aside id="scoreboard">
+        <h2 id="score">SCORE</h2>
+      </aside>
+      <main>
+        <canvas id="galaxy">
+          <!-- Play Space Invaders Game-->
+        </canvas>
+      </main>
+      <aside id="livesboard">
+        <h2 id="lives">LIVES</h2>
+      </aside>
+      <aside id="gamebuttons">
+        <button id="pause">PAUSE</button>
+        <button id="restart">RESTART</button>
+        <button id="levelUp">LEVEL UP</button>
+      </aside>
+    </div>
+
+    <div id="startScreen">
+      Show instructions and start button
+      <button id="startGame">Start Game</button>
+    </div>
+
+    <div id="pauseScreen">
+      Show transparent backdrop with a Resume 
+      <button id="resume">Resume</button>
+    </div>
+    
+
+    <script src="app.js"></script>
+  </body>
+</html>
