@@ -14,7 +14,7 @@ galaxy.setAttribute('width', gameWidth);
 
  //CREATE SPACEGUYS
 var spaceCowboy;
-var alienBug;
+var laserGun = [];
 var hoardeOfAlienBugs = [];
 var levels = [
     {   level: 'ONE',
@@ -24,7 +24,7 @@ var levels = [
         bugHeight: 60,
         bugColor: "rgb(3, 173, 211)",
         //quantity:20,
-        speed: .2
+        speed: .3
     },
     {   level: 'TWO',
         bugWidth: 60,
@@ -97,6 +97,20 @@ const chargeOnward =() => {
     }
 };
 
+function pewpew (e) {
+    switch (e.keyCode) {
+        case (32):
+            var plasmaBeam= new SpaceCreatures(spaceCowboy.x+7,spaceCowboy.y-17,'rgb(137, 250, 24)',5,12);
+            laserGun.push(plasmaBeam);
+    }
+};
+const plasmaBeamSpeed = () => {
+    for (i=0;i<laserGun.length;i++) {
+        laserGun[i].render();
+        laserGun[i].y -= 10;
+    }
+};
+
 
 // What needs to happen at every frame? 
 //1.display score(number of aliens destroyed)
@@ -109,17 +123,13 @@ const chargeOnward =() => {
 
 function gameLoop(){
     ctx.clearRect(0,0,galaxy.width,galaxy.height);
-//TO-DO; add a function for passive movement of your alienBug
-//console.log('hi');
-    // for (i=0;i<hoardeOfAlienBugs.length; i++){
-    //     hoardeOfAlienBugs[i].render();
-    //     hoardeOfAlienBugs[i].y +=.5;
-    // }
-    
     chargeOnward();
-
-  spaceCowboy.render();
-  statusboard.textContent = `X: ${spaceCowboy.x} Y: ${spaceCowboy.y}`;
+    // for (i=0;i<laserGun.length;i++) {
+    //     laserGun[i].render()
+    // };
+    plasmaBeamSpeed();
+    spaceCowboy.render();
+    statusboard.textContent = `X: ${spaceCowboy.x} Y: ${spaceCowboy.y}`;
   level.textContent = levels[currentLevel].level;
   galaxy.addEventListener("click", function (e) {
     livesboard.innerText = `X:${e.offsetX} Y: ${e.offsetY}`;
@@ -149,12 +159,13 @@ function moonWalk(e) {
 
 };
 
+
+
 document.addEventListener('DOMContentLoaded', 
 function() {
     spaceCowboy= new SpaceCreatures(parseInt(gameWidth)/2,parseInt(gameHeight)-30,'rgb(230, 92, 177)',20,20);
-    //alienBug = new SpaceCreatures(10,10,'rgb(31, 121, 97)',40,80);
     document.addEventListener('keydown',moonWalk);
-
+    document.addEventListener('keydown',pewpew);
     //SETTING A TIMER FOR 60 FRAMES PER SECOND
     var runGame = setInterval(gameLoop, 60);
 start.addEventListener('click',function () {
