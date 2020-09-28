@@ -1,4 +1,4 @@
-
+// CURRENT BUG-BUGS: space bar causes the hoarde to render again at the top, even though the makehoarde isnt explicitly being called in the spacebar event listener. if you console.log or click before hitting shoot, it will stop the problem, and if you pause then resume, it will stop the problem, but hitting start (or any time another hoard needs to be made, then it will cause the problem to happen again.)
 
 var galaxy = document.getElementById("galaxy");
 var ctx = galaxy.getContext("2d");
@@ -86,30 +86,53 @@ function makeHoarde (howMany,level) {
 
 var thisMany =  Math.floor(parseInt(gameWidth)/(levels[currentLevel].bugWidth+levels[currentLevel].bugSideMargin))
 
-
-
 const chargeOnward =() => {
     speed=levels[currentLevel].speed;
     ctx.clearRect(0,0,galaxy.width,galaxy.height);
     for (i=0;i<hoardeOfAlienBugs.length; i++){
         hoardeOfAlienBugs[i].render();
-        hoardeOfAlienBugs[i].y +=speed;
+        if (hoardeOfAlienBugs[i].alive === true) {
+            hoardeOfAlienBugs[i].y +=speed;
+        }
     }
 };
 
 function pewpew (e) {
+    e.preventDefault();
     switch (e.keyCode) {
         case (32):
             var plasmaBeam= new SpaceCreatures(spaceCowboy.x+7,spaceCowboy.y-17,'rgb(137, 250, 24)',5,12);
             laserGun.push(plasmaBeam);
-    }
+    } 
 };
 const plasmaBeamSpeed = () => {
     for (i=0;i<laserGun.length;i++) {
         laserGun[i].render();
         laserGun[i].y -= 10;
+        if (laserGun[i].y <0) {
+            laserGun.shift();
+        }
+        console.log(i,'('+laserGun[i].x+','+laserGun[i].y+')')
     }
 };
+
+function detectHit () {
+    if (laserGun.length > 0) {
+        for (i=0; i<laserGun.length; i++) {
+            for (j=0; j<hoardeOfAlienBugs.length; j++) {
+                if (laserGun[i].y <= hoardeOfAlienBugs[j].y+hoardeOfAlienBugs[j].height 
+                    && laserGun[i].y >= hoardeOfAlienBugs[j].y
+                    && laserGun[i].x >= hoardeOfAlienBugs[j].x
+                    && laserGun[i].x+5 <= hoardeOfAlienBugs[j].x+hoardeOfAlienBugs[j].width) {
+                        hoardeOfAlienBugs[j].alive=false;
+                        hoardeOfAlienBugs[j].color='rgb(0, 0, 0)';
+                    }
+            }
+            
+        }
+    }
+};
+//detectHit();
 
 
 // What needs to happen at every frame? 
@@ -124,16 +147,14 @@ const plasmaBeamSpeed = () => {
 function gameLoop(){
     ctx.clearRect(0,0,galaxy.width,galaxy.height);
     chargeOnward();
-    // for (i=0;i<laserGun.length;i++) {
-    //     laserGun[i].render()
-    // };
     plasmaBeamSpeed();
     spaceCowboy.render();
     statusboard.textContent = `X: ${spaceCowboy.x} Y: ${spaceCowboy.y}`;
   level.textContent = levels[currentLevel].level;
   galaxy.addEventListener("click", function (e) {
     livesboard.innerText = `X:${e.offsetX} Y: ${e.offsetY}`;
-  })
+  });
+  detectHit()
 };
 
 function moonWalk(e) {
@@ -156,7 +177,6 @@ function moonWalk(e) {
       spaceCowboy.x -= spaceCowboy.x
     }
   }
-
 };
 
 
@@ -168,9 +188,10 @@ function() {
     document.addEventListener('keydown',pewpew);
     //SETTING A TIMER FOR 60 FRAMES PER SECOND
     var runGame = setInterval(gameLoop, 60);
-start.addEventListener('click',function () {
+
+    start.addEventListener('click',function () {
     makeHoarde(thisMany,currentLevel);
-})
+    });
 
     levelUp.addEventListener('click', function () {currentLevel+=1});
     pause.addEventListener('click',function () {
