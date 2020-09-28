@@ -24,7 +24,7 @@ var levels = [
         bugHeight: 60,
         bugColor: "rgb(3, 173, 211)",
         //quantity:20,
-        speed: .3
+        speed: 1
     },
     {   level: 'TWO',
         bugWidth: 60,
@@ -36,7 +36,7 @@ var levels = [
         speed: .5
     },
     {   level: 'THREE',
-        bugWidth: 30,
+        bugWidth: 45,
         bugSideMargin: 50,
         bugTopMargin: 50,
         bugHeight: 30,
@@ -51,7 +51,7 @@ var levels = [
         bugHeight: 30,
         bugColor: "rgb(211, 180, 3)",
         //quantity:20,
-        speed: 1
+        speed: 5
     }
 ];
 var currentLevel = 0;
@@ -97,6 +97,28 @@ const chargeOnward =() => {
     }
 };
 
+function moonWalk(e) {
+    let stepSize= 50;
+    let boundary = parseInt(gameWidth)
+    if (e.keyCode === 39) {
+      if(spaceCowboy.x+stepSize < boundary) {
+        //MOVE RIGHT one step size if x + stepSize is less than gameWidth
+        spaceCowboy.x += stepSize
+      } else if (spaceCowboy.x+stepSize >= boundary && (spaceCowboy.x+spaceCowboy.width) <= boundary) {
+        //MOVE RIGHT for the remaining size if x + stepSize is more than gameWidth but x is still inside gameWidth
+        spaceCowboy.x += boundary-(spaceCowboy.x+spaceCowboy.width)
+      }
+    } else if (e.keyCode === 37) {
+      if(spaceCowboy.x-stepSize>=0){
+        //MOVE LEFT one stepSize if x - stepSize > 0
+        spaceCowboy.x -= stepSize
+      } else if (spaceCowboy.x-stepSize <0 && (spaceCowboy.x >= 0)) {
+        //MOVE LEFT for the remaining size if x - stepSize will be negative but x is still greater than or equal to 0
+        spaceCowboy.x -= spaceCowboy.x
+      }
+    }
+  };
+
 function pewpew (e) {
     e.preventDefault();
     switch (e.keyCode) {
@@ -122,17 +144,46 @@ function detectHit () {
             for (j=0; j<hoardeOfAlienBugs.length; j++) {
                 if (laserGun[i].y <= hoardeOfAlienBugs[j].y+hoardeOfAlienBugs[j].height 
                     && laserGun[i].y >= hoardeOfAlienBugs[j].y
-                    && laserGun[i].x >= hoardeOfAlienBugs[j].x
-                    && laserGun[i].x+5 <= hoardeOfAlienBugs[j].x+hoardeOfAlienBugs[j].width) {
+                    && laserGun[i].x+5 >= hoardeOfAlienBugs[j].x
+                    && laserGun[i].x <= hoardeOfAlienBugs[j].x+hoardeOfAlienBugs[j].width) {
                         hoardeOfAlienBugs[j].alive=false;
                         hoardeOfAlienBugs[j].color='rgb(0, 0, 0)';
+                        score += 1;
                     }
             }
             
         }
     }
 };
-//detectHit();
+
+const checkLose = () => {
+    let deadAliens = []
+    const countDead =() => {
+        for (i=0; i<hoardeOfAlienBugs.length; i++) {
+            if (hoardeOfAlienBugs[i].alive === false) {
+                deadAliens.push(1)
+            }
+        } return deadAliens.length
+    };
+    
+    if (hoardeOfAlienBugs.length > 0 && hoardeOfAlienBugs[i].y+hoardeOfAlienBugs[i].height >= parseInt(gameHeight)) {
+        spaceCowboy.alive = false;
+        spaceCowboy.color = 'rgb(0, 0, 0)';
+        ctx.strokeStyle = 'rgb(223, 32, 67)';
+        ctx.lineWidth = 3;
+        ctx.strokeText('INVASION COMPLETED! TRY AGAIN :(',parseInt(gameWidth)/8,parseInt(gameHeight)/2);
+        ctx.font = '400% Verdana';
+    } else if (countDead() === thisMany) {
+        ctx.strokeStyle = 'rgb(0, 238, 242)';
+        ctx.lineWidth = 3;
+        ctx.strokeText('VICTORY! PROCEED TO THE NEXT LEVEL',parseInt(gameWidth)/10,parseInt(gameHeight)/2);
+        ctx.font = '400% Verdana';
+    }
+    
+    
+};
+
+
 
 
 // What needs to happen at every frame? 
@@ -150,34 +201,16 @@ function gameLoop(){
     plasmaBeamSpeed();
     spaceCowboy.render();
     statusboard.textContent = `X: ${spaceCowboy.x} Y: ${spaceCowboy.y}`;
-  level.textContent = levels[currentLevel].level;
-  galaxy.addEventListener("click", function (e) {
-    livesboard.innerText = `X:${e.offsetX} Y: ${e.offsetY}`;
-  });
-  detectHit()
+    level.textContent = levels[currentLevel].level;
+    galaxy.addEventListener("click", function (e) {
+        livesboard.innerText = `X:${e.offsetX} Y: ${e.offsetY}`;
+    });
+    detectHit();
+    document.getElementById('score').innerText = score;
+    checkLose();
 };
 
-function moonWalk(e) {
-  let stepSize= 50;
-  let boundary = parseInt(gameWidth)
-  if (e.keyCode === 39) {
-    if(spaceCowboy.x+stepSize < boundary) {
-      //MOVE RIGHT one step size if x + stepSize is less than gameWidth
-      spaceCowboy.x += stepSize
-    } else if (spaceCowboy.x+stepSize >= boundary && (spaceCowboy.x+spaceCowboy.width) <= boundary) {
-      //MOVE RIGHT for the remaining size if x + stepSize is more than gameWidth but x is still inside gameWidth
-      spaceCowboy.x += boundary-(spaceCowboy.x+spaceCowboy.width)
-    }
-  } else if (e.keyCode === 37) {
-    if(spaceCowboy.x-stepSize>=0){
-      //MOVE LEFT one stepSize if x - stepSize > 0
-      spaceCowboy.x -= stepSize
-    } else if (spaceCowboy.x-stepSize <0 && (spaceCowboy.x >= 0)) {
-      //MOVE LEFT for the remaining size if x - stepSize will be negative but x is still greater than or equal to 0
-      spaceCowboy.x -= spaceCowboy.x
-    }
-  }
-};
+
 
 
 
