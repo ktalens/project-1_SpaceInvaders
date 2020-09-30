@@ -1,11 +1,5 @@
-// CURRENT BUG-BUGS: space bar causes the hoarde to render again at the top, even though the makehoarde isnt explicitly being called in the spacebar event listener. if you console.log or click before hitting shoot, it will stop the problem, and if you pause then resume, it will stop the problem, but hitting start (or any time another hoard needs to be made, then it will cause the problem to happen again.)
-
 var galaxy = document.getElementById("galaxy");
 var ctx = galaxy.getContext("2d");
-// galaxy.setAttribute('width', '1400');
-// galaxy.setAttribute('height', '800');
-// ctx.width = galaxy.width;
-// ctx.height = galaxy.height;
 let gameHeight= getComputedStyle(galaxy)['height'];
 let gameWidth= getComputedStyle(galaxy)['width'];
 galaxy.setAttribute('height', gameHeight);
@@ -14,15 +8,23 @@ galaxy.setAttribute('width', gameWidth);
 
  //CREATE SPACEGUYS
 var spaceCowboy;
+var cowboyImage =document.getElementById('cowboy-2');
 var laserGun = [];
+let laserImage = document.getElementById('laser');
 var hoardeOfAlienBugs = [];
+var deadAliens = [];
+var currentLevel = 0;
+var score = 0;
+var lives = 3;
+
 var levels = [
     {   level: 'ONE',
         bugWidth: 80,
         bugSideMargin: 20,
         bugTopMargin: 10,
-        bugHeight: 60,
-        bugColor: "rgb(3, 173, 211)",
+        bugHeight: 80,
+        bugImage : document.getElementById('awkward-alien'),
+        //bugColor: "rgb(3, 173, 211)",
         //quantity:20,
         speed: 1
     },
@@ -30,45 +32,44 @@ var levels = [
         bugWidth: 60,
         bugSideMargin: 80,
         bugTopMargin: 10,
-        bugHeight: 40,
-        bugColor: "rgb(67, 51, 157)",
+        bugHeight: 60,
+        bugImage : document.getElementById('pink-alien'),
         //quantity:20,
-        speed: .5
+        speed: 1
     },
     {   level: 'THREE',
         bugWidth: 45,
         bugSideMargin: 50,
         bugTopMargin: 50,
-        bugHeight: 30,
-        bugColor: "rgb(4, 213, 168)",
+        bugHeight: 50,
+        bugImage : document.getElementById('green-alien'),
         //quantity:20,
-        speed: 1
+        speed: 2
     },
     {   level: 'FOUR',
-        bugWidth: 15,
+        bugWidth: 40,
         bugSideMargin: 100,
         bugTopMargin: 150,
         bugHeight: 30,
-        bugColor: "rgb(211, 180, 3)",
+        bugImage : document.getElementById('ufo'),
         //quantity:20,
-        speed: 5
+        speed: 3
     }
 ];
-var currentLevel = 0;
-var score = 0;
-var lives = 2;
 
-function SpaceCreatures(x,y,color,width,height) {
+
+function SpaceCreatures(img,x,y,width,height) {
+    this.img= img
     this.x = x
     this.y=y
-    this.color = color
     this.width = width
     this.height= height
     this.alive = true
+
     this.render = function () {
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.width, this.height)
+        ctx.drawImage(this.img, this.x, this.y, this.width, this.height)
     }
+    
 };
 
 function makeHoarde (howMany,level) {
@@ -76,22 +77,22 @@ function makeHoarde (howMany,level) {
         let width = levels[level].bugWidth;
         let height = levels[level].bugHeight;
         let margin = levels[level].bugSideMargin;
-        let color = levels[level].bugColor;
+        let img = levels[level].bugImage;
         let startingXpos = margin+((width+margin)*i)
         let startingYpos= levels[level].bugTopMargin;
-        var alienBug = new SpaceCreatures(startingXpos, startingYpos, color, width, height); 
+        var alienBug = new SpaceCreatures(img, startingXpos, startingYpos, width, height); 
         hoardeOfAlienBugs.push(alienBug)
     }  
   };
 
-var thisMany =  Math.floor(parseInt(gameWidth)/(levels[currentLevel].bugWidth+levels[currentLevel].bugSideMargin))
+var thisMany 
 
 const chargeOnward =() => {
     speed=levels[currentLevel].speed;
     ctx.clearRect(0,0,galaxy.width,galaxy.height);
     for (i=0;i<hoardeOfAlienBugs.length; i++){
         hoardeOfAlienBugs[i].render();
-        if (hoardeOfAlienBugs[i].alive === true) {
+        if (hoardeOfAlienBugs[i].alive === true && hoardeOfAlienBugs[i].y<=parseInt(gameHeight)) {
             hoardeOfAlienBugs[i].y +=speed;
         }
     }
@@ -121,9 +122,10 @@ function moonWalk(e) {
 
 function pewpew (e) {
     e.preventDefault();
+    
     switch (e.keyCode) {
         case (32):
-            var plasmaBeam= new SpaceCreatures(spaceCowboy.x+7,spaceCowboy.y-17,'rgb(137, 250, 24)',5,12);
+            var plasmaBeam= new SpaceCreatures(laserImage,spaceCowboy.x+15,spaceCowboy.y-30,20,50);
             laserGun.push(plasmaBeam);
     } 
 };
@@ -134,7 +136,6 @@ const plasmaBeamSpeed = () => {
         if (laserGun[i].y <0) {
             laserGun.shift();
         }
-        console.log(i,'('+laserGun[i].x+','+laserGun[i].y+')')
     }
 };
 
@@ -147,8 +148,10 @@ function detectHit () {
                     && laserGun[i].x+5 >= hoardeOfAlienBugs[j].x
                     && laserGun[i].x <= hoardeOfAlienBugs[j].x+hoardeOfAlienBugs[j].width) {
                         hoardeOfAlienBugs[j].alive=false;
-                        hoardeOfAlienBugs[j].color='rgb(0, 0, 0)';
-                        score += 1;
+                        hoardeOfAlienBugs[j].width = 0;
+                        hoardeOfAlienBugs[j].height=0;
+                        laserGun[i].height=0;
+                        laserGun[i].width=0;
                     }
             }
             
@@ -156,30 +159,32 @@ function detectHit () {
     }
 };
 
-const checkLose = () => {
-    let deadAliens = []
-    const countDead =() => {
-        for (i=0; i<hoardeOfAlienBugs.length; i++) {
-            if (hoardeOfAlienBugs[i].alive === false) {
-                deadAliens.push(1)
+const countDead =() => {
+    for (i=0; i<hoardeOfAlienBugs.length; i++) {
+        if (hoardeOfAlienBugs[i].alive === false) {
+            while (deadAliens.includes(i)==false) {
+                deadAliens.push(i);
+                score ++
             }
-        } return deadAliens.length
-    };
-    
-    if (hoardeOfAlienBugs.length > 0 && hoardeOfAlienBugs[i].y+hoardeOfAlienBugs[i].height >= parseInt(gameHeight)) {
-        spaceCowboy.alive = false;
-        spaceCowboy.color = 'rgb(0, 0, 0)';
-        ctx.strokeStyle = 'rgb(223, 32, 67)';
-        ctx.lineWidth = 3;
-        ctx.strokeText('INVASION COMPLETED! TRY AGAIN :(',parseInt(gameWidth)/8,parseInt(gameHeight)/2);
-        ctx.font = '400% Verdana';
-    } else if (countDead() === thisMany) {
-        ctx.strokeStyle = 'rgb(0, 238, 242)';
-        ctx.lineWidth = 3;
-        ctx.strokeText('VICTORY! PROCEED TO THE NEXT LEVEL',parseInt(gameWidth)/10,parseInt(gameHeight)/2);
-        ctx.font = '400% Verdana';
+        }
+    } return 
+};
+
+const checkLose = () => {
+    for (i=0; i<hoardeOfAlienBugs.length; i++) {
+        if (hoardeOfAlienBugs.length > 0 && deadAliens.length === hoardeOfAlienBugs.length) {
+            ctx.strokeStyle = 'rgb(0, 238, 242)';
+            ctx.lineWidth = 3;
+            ctx.strokeText('VICTORY! PROCEED TO THE NEXT LEVEL',parseInt(gameWidth)/10,parseInt(gameHeight)/2);
+            ctx.font = '400% Verdana';
+        } else if (hoardeOfAlienBugs.length > 0 && hoardeOfAlienBugs[i].y+hoardeOfAlienBugs[i].height >= parseInt(gameHeight)) {
+            spaceCowboy.alive = false;
+            ctx.strokeStyle = 'rgb(223, 32, 67)';
+            ctx.lineWidth = 3;
+            ctx.strokeText('MISSION FAILED! TRY AGAIN :(',parseInt(gameWidth)/8,parseInt(gameHeight)/2);
+            ctx.font = '400% Verdana';
+        }
     }
-    
     
 };
 
@@ -200,14 +205,14 @@ function gameLoop(){
     chargeOnward();
     plasmaBeamSpeed();
     spaceCowboy.render();
-    statusboard.textContent = `X: ${spaceCowboy.x} Y: ${spaceCowboy.y}`;
     level.textContent = levels[currentLevel].level;
-    galaxy.addEventListener("click", function (e) {
-        livesboard.innerText = `X:${e.offsetX} Y: ${e.offsetY}`;
-    });
+    document.getElementById('lives').innerText = lives;
     detectHit();
     document.getElementById('score').innerText = score;
+    countDead();
     checkLose();
+    document.getElementById('status').innerText = `Destroy the incoming hoarde of ${thisMany} aliens`
+     
 };
 
 
@@ -216,7 +221,8 @@ function gameLoop(){
 
 document.addEventListener('DOMContentLoaded', 
 function() {
-    spaceCowboy= new SpaceCreatures(parseInt(gameWidth)/2,parseInt(gameHeight)-30,'rgb(230, 92, 177)',20,20);
+    spaceCowboy= new SpaceCreatures(cowboyImage, parseInt(gameWidth)/2,parseInt(gameHeight)-70,60,60);
+    thisMany=  Math.floor(parseInt(gameWidth)/(levels[currentLevel].bugWidth+levels[currentLevel].bugSideMargin))
     document.addEventListener('keydown',moonWalk);
     document.addEventListener('keydown',pewpew);
     //SETTING A TIMER FOR 60 FRAMES PER SECOND
@@ -225,8 +231,13 @@ function() {
     start.addEventListener('click',function () {
     makeHoarde(thisMany,currentLevel);
     });
-
-    levelUp.addEventListener('click', function () {currentLevel+=1});
+    levelUp.addEventListener('click', function () {
+        if (currentLevel<= 2) {
+            currentLevel+=1;
+        }
+        thisMany=  Math.floor(parseInt(gameWidth)/(levels[currentLevel].bugWidth+levels[currentLevel].bugSideMargin))
+    });
+    
     pause.addEventListener('click',function () {
         clearInterval(runGame);
         pauseScreen.style.display = "inline-flex";    

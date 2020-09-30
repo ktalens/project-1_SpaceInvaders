@@ -4,35 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <title>Document</title>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Gugi&display=swap" rel="stylesheet">
+    <title>Space Invaders</title>
 </head>
 <body>
     <h1>Space Invaders</h1>
     <div id="container">
-      <aside id="levelboard">
-        <h3 id="level-title">LEVEL: </h3>
-        <h2 id="level"></h2>
-      </aside>
-      <aside id="statusboard">
-        <h2 id="status">STATUS: PAUSED or SEND THESE SPACEBUGS TO HECK</h2>
-      </aside>
-      <aside id="scoreboard">
-        <h3 id="score-title">SCORE: </h3>
-        <h2 id="score"></h2>
-      </aside>
+      <div class="info">
+        <aside id="levelboard">
+            <h3 id="level-title">LEVEL: </h3>
+            <h2 id="level"></h2>
+          </aside>
+          <aside id="statusboard">
+            <h3 id="status-title">MISSION:</h3>
+            <h2 id ="status"></h2>
+          </aside>
+          <aside id="scoreboard">
+            <h3 id="score-title">SCORE: </h3>
+            <h2 id="score"></h2>
+          </aside>
+      </div>
       <main>
+        <div style="display: none;" >
+            <img id = "aliens"
+                src= "https://pixy.org/download/155989/">
+        </div>
         <canvas id="galaxy">
           <!-- Play Space Invaders Game-->
         </canvas>
       </main>
-      <aside id="livesboard">
-        <h2 id="lives">LIVES</h2>
-      </aside>
-      <aside id="gamebuttons">
-        <button id="pause">PAUSE</button>
-        <button id="start">START</button>
-        <button id="levelUp">LEVEL UP</button>
-      </aside>
+      <div class = "info">
+        <aside id="livesboard">
+            <h3 id="lives-title">LIVES:</h3>
+            <h2 id="lives"></h2>
+          </aside>
+          <aside id="gamebuttons">
+            
+            <button id="start">START</button>
+            <button id="levelUp">LEVEL UP</button>
+            <button id="pause">PAUSE</button>
+          </aside>
+      </div>
+      
     </div>
 
     <div id="startScreen">
@@ -41,10 +55,40 @@
     </div>
 
     <div id="pauseScreen">
-      Show transparent backdrop with a Resume 
+        Hit resume to continue playing.
       <button id="resume">Resume</button>
     </div>
-    
+    <div id="images">
+        <img id= "awkward-alien" 
+        src = "https://cdn.pixabay.com/photo/2014/03/25/17/01/cyclops-297870_1280.png"
+        height = "100px" width = "100px">
+            
+        <img id= "ufo" 
+        src = "https://cdn.pixabay.com/photo/2014/04/03/00/42/spaceship-309153__340.png"
+        height = "100px" width = "100px">
+        <img id= "pink-alien" 
+        src = "https://pngriver.com/wp-content/uploads/2018/04/Download-Virus-PNG-Pic.png"
+        height = "100px" width = "100px">
+        <img id= "green-alien" 
+        src = "https://pixy.org/download/102291/"
+        height = "100px" width = "100px">
+        <img id= "cowboy-2" 
+        src = "https://storage.needpix.com/rsynced_images/science-3497118_1280.png"
+        height = "100px" width = "100px">
+        <img id= "cowboy-3" 
+        src = "https://storage.needpix.com/rsynced_images/robot-146723_1280.png"
+        height = "100px" width = "100px">
+        <img id= "cowboy-droid" 
+        src = "https://cdn.pixabay.com/photo/2013/07/13/11/30/future-158295__340.png"
+        height = "100px" width = "100px">
+        <img id= "laser" 
+        src = "https://cdn.clipart.email/ee466bd88e855f0fe6f63d79c0fc17d4_yellow-sunlight-beam-psd-light-effect-light-png-for-picsart-_640-640.png"
+        height = "100px" width = "100px">
+        
+        
+        
+        
+    </div>
 
     <script src="app.js"></script>
   </body>

@@ -1,13 +1,28 @@
 body {
     border: 1px solid black;
     text-align: center;
+    font-family: 'Gugi', cursive;
+    text-shadow: 1pt 1pt rgb(80, 79, 79);
+    background-image: url("https://cdn.pixabay.com/photo/2019/01/02/02/37/background-3907905_1280.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
 }
-
+h1 {
+    color: rgb(106, 18, 156);
+    text-shadow: 1pt 1pt rgb(151, 146, 146);
+    font-size: 40pt;
+}
 
 main {
     border: 1px solid black;
+    background: rgba(21, 0, 31, 0.116);
 }
 
+.info {
+    border: 4pt solid rgba(192, 192, 192, 0.37);
+    border-radius: 8pt;
+    background: rgba(59, 1, 87, 0.431);
+}
 #startScreen,#pauseScreen {
     background: rgba(0, 0, 0, 0.728);
     height: 100%;
@@ -19,38 +34,58 @@ main {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    color: cornsilk;
 }
 
 #resume {
     height: 4pc;
-    background: rgb(137, 250, 24);
+    background: rrgba(0, 255, 136, 0.986);
 }
 
 #container {
-    background: rgb(9, 174, 91);
+    background: rgba(10, 0, 26, 0.178);
+    border: 1px solid rgb(0, 0, 0);
     display: block;
+    color: rgb(36, 14, 57);
+    margin: 0 10% 10% 10%;
 }
 
 aside {
-    border: 1px solid black;
+    border: 3px solid rgba(216, 216, 216, 0.52);
     display: inline-flex;
     flex-direction: column;
     width: 32%;
-    background: red;
+    background: rgba(238, 238, 238, 0.541);
     margin: 10px auto;
+    border-radius: 3pc;
  }
 
- button {
-     margin: 2%;
-     height: 2pc;
- }
+
 
 #galaxy {
-    background-color: rgb(0, 0, 0);
+    background-color: rgba(42, 42, 42, 0.418);
     width: 100%;
     height: 100%;
 }
+button {
+    margin: 2%;
+    height: 2pc;
+    font-family: 'Gugi', cursive;
+    cursor: pointer;
+    width: 50%;
+    align-self: center;
+    color: rgba(0, 255, 136, 0.986);
+    background-color: rgb(11, 8, 17);
+    border: 1px solid snow;
 
-#livesboard, #statusboard {
-    font-size: 38pt;
+}
+
+h2 {
+    font-family: 'Audiowide', cursive;
+    color:rgba(0, 255, 136, 0.986);
+    text-shadow: 2pt 2pt black;
+    
+}
+#images {
+display: none;
 }
