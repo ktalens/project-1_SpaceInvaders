@@ -181,8 +181,8 @@ const checkLose = () => {
             spaceCowboy.alive = false;
             ctx.strokeStyle = 'rgb(223, 32, 67)';
             ctx.lineWidth = 3;
-            ctx.strokeText('MISSION FAILED! TRY AGAIN :(',parseInt(gameWidth)/8,parseInt(gameHeight)/2);
-            ctx.font = '400% Verdana';
+            ctx.strokeText('MISSION FAILED! TRY AGAIN :(',parseInt(gameWidth)/6,parseInt(gameHeight)/2);
+            ctx.font = '300% Verdana';
         }
     }
     
@@ -227,7 +227,9 @@ function() {
     document.addEventListener('keydown',pewpew);
     //SETTING A TIMER FOR 60 FRAMES PER SECOND
     var runGame = setInterval(gameLoop, 60);
-
+    gotIt.addEventListener('click', function () {
+        startScreen.style.display = 'none'
+    });
     start.addEventListener('click',function () {
     makeHoarde(thisMany,currentLevel);
     });

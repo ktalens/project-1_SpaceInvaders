@@ -17,15 +17,23 @@ main {
     border: 1px solid black;
     background: rgba(21, 0, 31, 0.116);
 }
-
+aside {
+    border: 3px solid rgba(216, 216, 216, 0.52);
+    display: inline-flex;
+    flex-direction: column;
+    width: 32%;
+    background: rgba(238, 238, 238, 0.541);
+    margin: 10px auto;
+    border-radius: 3pc;
+ }
 .info {
     border: 4pt solid rgba(192, 192, 192, 0.37);
     border-radius: 8pt;
     background: rgba(59, 1, 87, 0.431);
 }
-#startScreen,#pauseScreen {
-    background: rgba(0, 0, 0, 0.728);
-    height: 100%;
+.tempDisplays {
+    background: rgba(31, 31, 31, 0.728);
+    height: 140%;
     width: 100%;
     top: 0;
     left:0;
@@ -35,11 +43,20 @@ main {
     align-items: center;
     justify-content: center;
     color: cornsilk;
+    font-size: 20pt;
+}
+#startScreen {
+    display: inline-flex;
 }
 
-#resume {
+#resume,#gotIt {
     height: 4pc;
-    background: rrgba(0, 255, 136, 0.986);
+    border: 4pt solid rgba(255, 255, 255, 0.643);
+    border-radius: 6pt;
+    background: rgba(0, 255, 136, 0.986);
+    color: black;
+    font-size: 20pt;
+    width: 20%;
 }
 
 #container {
@@ -50,15 +67,7 @@ main {
     margin: 0 10% 10% 10%;
 }
 
-aside {
-    border: 3px solid rgba(216, 216, 216, 0.52);
-    display: inline-flex;
-    flex-direction: column;
-    width: 32%;
-    background: rgba(238, 238, 238, 0.541);
-    margin: 10px auto;
-    border-radius: 3pc;
- }
+
 
 
 
