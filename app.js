@@ -25,12 +25,11 @@ var levels = [
         bugTopMargin: 10,
         bugHeight: 80,
         bugImage : document.getElementById('awkward-alien'),
-        //bugColor: "rgb(3, 173, 211)",
-        //quantity:20,
-        bugSpeed: 100,
+        bugSpeed: 1,
         laserSpeed: 10,
         levelWin: false,
-        rounds: 1
+        rounds: 1,
+        roundDelay: 4000
     },
     {   level: 'TWO',
         bugWidth: 60,
@@ -38,11 +37,11 @@ var levels = [
         bugTopMargin: 10,
         bugHeight: 60,
         bugImage : document.getElementById('pink-alien'),
-        //quantity:20,
         bugSpeed: 3,
         laserSpeed: 15,
         levelWin: false,
-        rounds: 2
+        rounds: 2,
+        roundDelay: 3000
     },
     {   level: 'THREE',
         bugWidth: 45,
@@ -50,23 +49,23 @@ var levels = [
         bugTopMargin: 50,
         bugHeight: 50,
         bugImage : document.getElementById('green-alien'),
-        //quantity:20,
         bugSpeed: 2,
         laserSpeed: 30,
         levelWin: false,
-        rounds: 4
+        rounds: 4,
+        roundDelay: 2000
     },
     {   level: 'FOUR',
         bugWidth: 40,
         bugSideMargin: 100,
-        bugTopMargin: 150,
+        bugTopMargin: 10,
         bugHeight: 30,
         bugImage : document.getElementById('ufo'),
-        //quantity:20,
-        bugSpeed: 3,
+        bugSpeed: 5,
         laserSpeed: 50,
         levelWin: false,
-        rounds: 5
+        rounds: 5,
+        roundDelay: 1000
     }
 ];
 
@@ -156,6 +155,7 @@ const plasmaBeamSpeed = () => {
 function detectHit () {
     if (laserGun.length > 0) {
         for (i=0; i<laserGun.length; i++) {
+            if (laserGun[i].width > 0){
             for (j=0; j<hoardeOfAlienBugs.length; j++) {
                 if (laserGun[i].y <= hoardeOfAlienBugs[j].y+hoardeOfAlienBugs[j].height 
                     && laserGun[i].y >= hoardeOfAlienBugs[j].y
@@ -168,7 +168,7 @@ function detectHit () {
                         laserGun[i].width=0;
                     }
             }
-            
+        }
         }
     }
 };
@@ -205,9 +205,6 @@ const checkLose = () => {
             levelUp.style.display='none';
             start.innerText= 'TRY AGAIN';
             start.style.display = 'inline';
-            if (lives=0) {
-                start.display = true
-            }
         }
     }
     
@@ -237,10 +234,12 @@ function gameLoop(){
     detectHit();
     document.getElementById('score').innerText = score;
     countDead();
-    //countLives();
     checkLose();
-    document.getElementById('status').innerText = `Destroy the incoming hoarde of ${thisMany*levels[currentLevel].rounds} aliens`
-     
+    document.getElementById('status').innerText = `Destroy the incoming hoarde of ${thisMany*levels[currentLevel].rounds} aliens`;
+    if (lives === 0) {
+        start.disabled = true;
+        start.style.opacity = .4
+    } 
 };
 
 
@@ -277,8 +276,11 @@ function() {
             currentLevel+=1;
         }
         thisMany=  Math.floor(parseInt(gameWidth)/(levels[currentLevel].bugWidth+levels[currentLevel].bugSideMargin));
-        var hoardesOnHoardes = setInterval(function () {makeHoarde(thisMany,currentLevel);},4500);
-        setTimeout( function() { clearInterval(hoardesOnHoardes) }, 6000*levels[currentLevel].rounds );
+        var hoardesOnHoardes = setInterval(
+            function () {
+                makeHoarde(thisMany,currentLevel);
+            },levels[currentLevel].roundDelay);
+        setTimeout( function() { clearInterval(hoardesOnHoardes) }, levels[currentLevel].roundDelay*levels[currentLevel].rounds );
         levelUp.disabled = true;
         levelUp.style.opacity = .4;
         

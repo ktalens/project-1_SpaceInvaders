@@ -90,7 +90,7 @@ button {
 }
 
 #levelUp {
-    display: none;
+    /* display: none; */
     opacity: .4;
 }
 
