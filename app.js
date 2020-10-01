@@ -15,7 +15,8 @@ var hoardeOfAlienBugs = [];
 var deadAliens = [];
 var currentLevel = 0;
 var score = 0;
-var lives = 3;
+var lives =3
+var thisMany;
 
 var levels = [
     {   level: 'ONE',
@@ -26,11 +27,10 @@ var levels = [
         bugImage : document.getElementById('awkward-alien'),
         //bugColor: "rgb(3, 173, 211)",
         //quantity:20,
-        bugSpeed: 1,
+        bugSpeed: 100,
         laserSpeed: 10,
         levelWin: false,
-        rounds: 1,
-        levelLosses: []
+        rounds: 1
     },
     {   level: 'TWO',
         bugWidth: 60,
@@ -39,7 +39,7 @@ var levels = [
         bugHeight: 60,
         bugImage : document.getElementById('pink-alien'),
         //quantity:20,
-        bugSpeed: 1,
+        bugSpeed: 3,
         laserSpeed: 15,
         levelWin: false,
         rounds: 2
@@ -98,7 +98,7 @@ function makeHoarde (howMany,level) {
     }  
   };
 
-var thisMany 
+
 
 const chargeOnward =() => {
     let speed=levels[currentLevel].bugSpeed;
@@ -173,6 +173,7 @@ function detectHit () {
     }
 };
 
+
 const countDead =() => {
     for (i=0; i<hoardeOfAlienBugs.length; i++) {
         if (hoardeOfAlienBugs[i].alive === false) {
@@ -190,7 +191,7 @@ const checkLose = () => {
             ctx.strokeStyle = 'rgb(0, 238, 242)';
             ctx.lineWidth = 3;
             ctx.strokeText('VICTORY! PROCEED TO NEXT LEVEL',parseInt(gameWidth)/10,parseInt(gameHeight)/2);
-            ctx.font = '400% Verdana';
+            ctx.font = '300% Verdana';
             levels[currentLevel].levelWin = true;
             levelUp.style.opacity = 1;
             levelUp.disabled = false;
@@ -201,8 +202,16 @@ const checkLose = () => {
             ctx.lineWidth = 3;
             ctx.strokeText('MISSION FAILED! TRY AGAIN :(',parseInt(gameWidth)/6,parseInt(gameHeight)/2);
             ctx.font = '300% Verdana';
+            levelUp.style.display='none';
+            start.innerText= 'TRY AGAIN';
+            start.style.display = 'inline';
+            if (lives=0) {
+                start.display = true
+            }
         }
     }
+    
+        
     
 };
 
@@ -224,10 +233,11 @@ function gameLoop(){
     plasmaBeamSpeed();
     spaceCowboy.render();
     level.textContent = levels[currentLevel].level;
-    document.getElementById('lives').innerText = lives;
+    document.getElementById('lives').innerText = lives;//.length;
     detectHit();
     document.getElementById('score').innerText = score;
     countDead();
+    //countLives();
     checkLose();
     document.getElementById('status').innerText = `Destroy the incoming hoarde of ${thisMany*levels[currentLevel].rounds} aliens`
      
@@ -249,21 +259,28 @@ function() {
         startScreen.style.display = 'none'
     });
     start.addEventListener('click',function () {
-    makeHoarde(thisMany,currentLevel);
-    start.style.display = 'none';
-    levelUp.style.display = 'inline';
-    levelUp.disabled = true
+        if (lives >= 0) {
+            spaceCowboy.alive = true;
+        hoardeOfAlienBugs.splice(score,(thisMany*levels[currentLevel].rounds));
+        makeHoarde(thisMany,currentLevel);
+        start.style.display = 'none';
+        levelUp.style.display = 'inline';
+        levelUp.disabled = true;
+        lives -= 1
+        } else if (lives = 0) {
+            start.disabled = true
+        }
+        
     });
     levelUp.addEventListener('click', function () {
         if (currentLevel<= 2) {
             currentLevel+=1;
         }
         thisMany=  Math.floor(parseInt(gameWidth)/(levels[currentLevel].bugWidth+levels[currentLevel].bugSideMargin));
-
-        var hoardesOnHoardes = setInterval(function () {makeHoarde(thisMany,currentLevel);},5000);
-            setTimeout( function() { clearInterval(hoardesOnHoardes) }, 6000*levels[currentLevel].rounds );
-            //clearInterval()
-            //makeHoarde(thisMany,currentLevel)
+        var hoardesOnHoardes = setInterval(function () {makeHoarde(thisMany,currentLevel);},4500);
+        setTimeout( function() { clearInterval(hoardesOnHoardes) }, 6000*levels[currentLevel].rounds );
+        levelUp.disabled = true;
+        levelUp.style.opacity = .4;
         
     });
     
