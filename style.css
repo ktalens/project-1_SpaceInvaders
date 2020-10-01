@@ -89,6 +89,11 @@ button {
 
 }
 
+#levelUp {
+    display: none;
+    opacity: .4;
+}
+
 h2 {
     font-family: 'Audiowide', cursive;
     color:rgba(0, 255, 136, 0.986);

@@ -26,7 +26,11 @@ var levels = [
         bugImage : document.getElementById('awkward-alien'),
         //bugColor: "rgb(3, 173, 211)",
         //quantity:20,
-        speed: 1
+        bugSpeed: 1,
+        laserSpeed: 10,
+        levelWin: false,
+        rounds: 1,
+        levelLosses: []
     },
     {   level: 'TWO',
         bugWidth: 60,
@@ -35,7 +39,10 @@ var levels = [
         bugHeight: 60,
         bugImage : document.getElementById('pink-alien'),
         //quantity:20,
-        speed: 1
+        bugSpeed: 1,
+        laserSpeed: 15,
+        levelWin: false,
+        rounds: 2
     },
     {   level: 'THREE',
         bugWidth: 45,
@@ -44,7 +51,10 @@ var levels = [
         bugHeight: 50,
         bugImage : document.getElementById('green-alien'),
         //quantity:20,
-        speed: 2
+        bugSpeed: 2,
+        laserSpeed: 30,
+        levelWin: false,
+        rounds: 4
     },
     {   level: 'FOUR',
         bugWidth: 40,
@@ -53,7 +63,10 @@ var levels = [
         bugHeight: 30,
         bugImage : document.getElementById('ufo'),
         //quantity:20,
-        speed: 3
+        bugSpeed: 3,
+        laserSpeed: 50,
+        levelWin: false,
+        rounds: 5
     }
 ];
 
@@ -88,7 +101,7 @@ function makeHoarde (howMany,level) {
 var thisMany 
 
 const chargeOnward =() => {
-    speed=levels[currentLevel].speed;
+    let speed=levels[currentLevel].bugSpeed;
     ctx.clearRect(0,0,galaxy.width,galaxy.height);
     for (i=0;i<hoardeOfAlienBugs.length; i++){
         hoardeOfAlienBugs[i].render();
@@ -130,9 +143,10 @@ function pewpew (e) {
     } 
 };
 const plasmaBeamSpeed = () => {
+    let beamSpeed = levels[currentLevel].laserSpeed
     for (i=0;i<laserGun.length;i++) {
         laserGun[i].render();
-        laserGun[i].y -= 10;
+        laserGun[i].y -= beamSpeed;
         if (laserGun[i].y <0) {
             laserGun.shift();
         }
@@ -175,8 +189,12 @@ const checkLose = () => {
         if (hoardeOfAlienBugs.length > 0 && deadAliens.length === hoardeOfAlienBugs.length) {
             ctx.strokeStyle = 'rgb(0, 238, 242)';
             ctx.lineWidth = 3;
-            ctx.strokeText('VICTORY! PROCEED TO THE NEXT LEVEL',parseInt(gameWidth)/10,parseInt(gameHeight)/2);
+            ctx.strokeText('VICTORY! PROCEED TO NEXT LEVEL',parseInt(gameWidth)/10,parseInt(gameHeight)/2);
             ctx.font = '400% Verdana';
+            levels[currentLevel].levelWin = true;
+            levelUp.style.opacity = 1;
+            levelUp.disabled = false;
+            
         } else if (hoardeOfAlienBugs.length > 0 && hoardeOfAlienBugs[i].y+hoardeOfAlienBugs[i].height >= parseInt(gameHeight)) {
             spaceCowboy.alive = false;
             ctx.strokeStyle = 'rgb(223, 32, 67)';
@@ -211,7 +229,7 @@ function gameLoop(){
     document.getElementById('score').innerText = score;
     countDead();
     checkLose();
-    document.getElementById('status').innerText = `Destroy the incoming hoarde of ${thisMany} aliens`
+    document.getElementById('status').innerText = `Destroy the incoming hoarde of ${thisMany*levels[currentLevel].rounds} aliens`
      
 };
 
@@ -232,12 +250,21 @@ function() {
     });
     start.addEventListener('click',function () {
     makeHoarde(thisMany,currentLevel);
+    start.style.display = 'none';
+    levelUp.style.display = 'inline';
+    levelUp.disabled = true
     });
     levelUp.addEventListener('click', function () {
         if (currentLevel<= 2) {
             currentLevel+=1;
         }
-        thisMany=  Math.floor(parseInt(gameWidth)/(levels[currentLevel].bugWidth+levels[currentLevel].bugSideMargin))
+        thisMany=  Math.floor(parseInt(gameWidth)/(levels[currentLevel].bugWidth+levels[currentLevel].bugSideMargin));
+
+        var hoardesOnHoardes = setInterval(function () {makeHoarde(thisMany,currentLevel);},5000);
+            setTimeout( function() { clearInterval(hoardesOnHoardes) }, 6000*levels[currentLevel].rounds );
+            //clearInterval()
+            //makeHoarde(thisMany,currentLevel)
+        
     });
     
     pause.addEventListener('click',function () {
