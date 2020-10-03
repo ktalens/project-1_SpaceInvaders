@@ -37,7 +37,7 @@ var levels = [
         bugTopMargin: 10,
         bugHeight: 60,
         bugImage : document.getElementById('pink-alien'),
-        bugSpeed: 3,
+        bugSpeed: 2,
         laserSpeed: 15,
         levelWin: false,
         rounds: 2,
