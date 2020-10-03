@@ -14,12 +14,6 @@ The user plays as the spaceman, battling incoming hoardes of aliens by shooting 
 * CSS
 * JavaScript 
 
-##### Credits:
-
-    Unsplash.com
-    unDraw.co
-    Slideshow Repo
-
 ## Approach:
 
 #### Overview
